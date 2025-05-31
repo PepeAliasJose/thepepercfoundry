@@ -7,7 +7,7 @@ import gsap from 'gsap'
 export default function Home () {
   function logoAnimation (tl) {
     // Altura máxima del scroll
-    let maxScroll = window.innerHeight * 0.65 //* 2
+    const maxScroll = window.innerHeight * 0.65 //* 2
     const scrollPosition = window.scrollY
     // Calcular el porcentaje del scroll
     const scrollFraction = scrollPosition / maxScroll
@@ -88,7 +88,7 @@ export default function Home () {
             className='text-center text-2xl
            font-medium [word-spacing:1px] mt-10 max-w-xl mx-auto'
           >
-            Desarrollador con más de{' '}
+            Programador con más de{' '}
             <strong className='text-[var(--mediumHighlight)]'>3 años </strong>
             desarrollando aplicaciones con
             <strong className='text-[var(--mediumHighlight)] ml-2'>
