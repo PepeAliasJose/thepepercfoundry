@@ -1,103 +1,129 @@
-import Image from "next/image";
+'use client'
+import { ChevronDownIcon } from '@heroicons/react/24/outline'
+import MovingLogo from './components/atoms/MovingLogo'
+import { useEffect, useLayoutEffect } from 'react'
+import gsap from 'gsap'
 
-export default function Home() {
+export default function Home () {
+  function logoAnimation (tl) {
+    // Altura máxima del scroll
+    let maxScroll = window.innerHeight * 0.65 //* 2
+    const scrollPosition = window.scrollY
+    // Calcular el porcentaje del scroll
+    const scrollFraction = scrollPosition / maxScroll
+
+    tl.progress(scrollFraction).play()
+    tl.pause()
+  }
+
+  function createTimeline () {
+    const logo = document.getElementById('logo')
+    const logoWidth = logo.offsetWidth
+    const logoPos = logo.getBoundingClientRect()
+
+    const logoMask = document.getElementById('proyectos')
+    logoMask.style.maskSize = `${logoWidth}px`
+    logoMask.style.webkitMaskSize = `${logoWidth}px`
+    logoMask.style.maskPosition = ` center ${logoPos.y}px`
+    logoMask.style.webkitMaskPosition = ` center ${logoPos.y}px`
+
+    let tl = gsap.timeline()
+    tl.pause()
+    tl.fromTo(
+      '#proyectos',
+      { maskPosition: ` center ${logoPos.y}px` },
+      {
+        maskSize: '2000dvh',
+        maskPosition: ` center calc(-440dvh)`,
+        ease: 'power1.inOut',
+        delay: 0,
+        duration: 2
+      }
+    )
+    tl.fromTo(
+      '#logoFondo',
+      { backgroundColor: '#FFFFFFFF' },
+      {
+        backgroundColor: '#FFFFFF00',
+        ease: 'none',
+        delay: 0.5,
+        duration: 0.5
+      },
+      '<'
+    )
+    return tl
+  }
+
+  useLayoutEffect(() => {
+    scrollTo(0, 0)
+    let tl = createTimeline()
+
+    //Reconfigurar timeline al reescalar ventana y que se mantenga
+    const reset = () => {
+      tl = createTimeline()
+      logoAnimation(tl)
+    }
+    //Funcion de scroll
+    const scroll = () => {
+      logoAnimation(tl)
+    }
+
+    window.addEventListener('resize', reset)
+    document.addEventListener('scroll', scroll)
+
+    return () => {
+      document.removeEventListener('scroll', scroll)
+      window.removeEventListener('resize', reset)
+    }
+  }, [])
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.js
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <>
+      <main className='h-[150dvh]'>
+        {/*Introduccion*/}
+        <section className='fixed w-full h-[100dvh] pt-20 px-10 pointer-events-none'>
+          <MovingLogo />
+          <h1
+            id='presentacion'
+            className='text-center text-2xl
+           font-medium [word-spacing:1px] mt-10 max-w-xl mx-auto'
+          >
+            Desarrollador con más de{' '}
+            <strong className='text-[var(--mediumHighlight)]'>3 años </strong>
+            desarrollando aplicaciones con
+            <strong className='text-[var(--mediumHighlight)] ml-2'>
+              NextJS, MySQL y Java
+            </strong>
+          </h1>
+        </section>
+        {/*Proyectos*/}
+        <section
+          id='proyectos'
+          className='fixed w-full min-h-[100dvh] logo pointer-events-none bg-[var(--backgroundColorLight)]'
+        >
+          <div id='logoFondo' className='absolute w-full h-full ' />
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+          <article
+            className='pointer-events-auto w-full
+           text-center pt-40 bg-[var(--backgroundColorLight)]'
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
+            <p className='p-5'>
+              CONTENIDO CONTENIDO CONTENIDO CONTENIDO CONTENIDO CONTENIDO
+              CONTENIDO CONTENIDO CONTENIDO CONTENIDO CONTENIDO CONTENIDO
+              CONTENIDO CONTENIDO CONTENIDO CONTENIDO CONTENIDO CONTENIDO
+              CONTENIDO CONTENIDO CONTENIDO CONTENIDO CONTENIDO CONTENIDO
+              CONTENIDO CONTENIDO CONTENIDO CONTENIDO CONTENIDO CONTENIDO
+              CONTENIDO CONTENIDO
+            </p>
+          </article>
+        </section>
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+      <footer className='fixed flex justify-center bottom-0 left-0 w-screen '>
+        <ChevronDownIcon
+          className='size-12 scale-y-75
+         stroke-2 text-[var(--intenseHighlight)] animate-bounce'
+        />
       </footer>
-    </div>
-  );
+    </>
+  )
 }
