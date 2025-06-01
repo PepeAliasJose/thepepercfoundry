@@ -11,11 +11,37 @@
   --textColor: #fff;
 }
 
+@font-face {
+  font-family: 'Bio Sans';
+  src: url('./fonts/biosans/Flat-it\ -\ Bio\ Sans\ Bold.otf');
+}
+
+@font-face {
+  font-family: 'Koulen';
+  src: url('./fonts/Koulen/Koulen-Regular.ttf');
+}
+
+.bio-sans {
+  font-family: Bio Sans;
+}
+
+.koulen {
+  font-family: Koulen;
+}
+
+strong {
+  font-weight: inherit;
+}
+
 body {
   background-color: var(--backgroundColorLight);
   color: var(--textColor);
   font-family: Arial, Helvetica, sans-serif;
   font-size: 20px;
+}
+
+.hl-text {
+  color: var(--intenseHighlight);
 }
 
 .logo {

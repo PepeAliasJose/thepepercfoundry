@@ -3,7 +3,7 @@ import Image from 'next/image'
 function MovingLogo () {
   return (
     <div className='grid grid-cols-1 grid-rows-1 scale-[1] place-items-center'>
-      <div id='logo' className='col-start-1 row-start-1 w-full max-w-xl '>
+      <div id='logo' className='col-start-1 row-start-1 w-full max-w-md '>
         <Image
           className='invisible'
           src='/Logo.svg'

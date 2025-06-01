@@ -1,120 +1,91 @@
 'use client'
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
-import MovingLogo from './components/atoms/MovingLogo'
-import { useEffect, useLayoutEffect } from 'react'
+import { useEffect, useLayoutEffect, useRef } from 'react'
 import gsap from 'gsap'
+import BlurInSection from './components/layouts/BlurInSection'
+import Intro from './components/molecules/Intro'
+import { ScrollTrigger } from 'gsap/all'
+import Image from 'next/image'
+import DBD_Project from './components/ornanisms/DBD-Project'
 
 export default function Home () {
-  function logoAnimation (tl) {
-    // Altura máxima del scroll
-    const maxScroll = window.innerHeight * 0.65 //* 2
-    const scrollPosition = window.scrollY
-    // Calcular el porcentaje del scroll
-    const scrollFraction = scrollPosition / maxScroll
-
-    tl.progress(scrollFraction).play()
-    tl.pause()
-  }
-
-  function createTimeline () {
-    const logo = document.getElementById('logo')
-    const logoWidth = logo.offsetWidth
-    const logoPos = logo.getBoundingClientRect()
-
-    const logoMask = document.getElementById('proyectos')
-    logoMask.style.maskSize = `${logoWidth}px`
-    logoMask.style.webkitMaskSize = `${logoWidth}px`
-    logoMask.style.maskPosition = ` center ${logoPos.y}px`
-    logoMask.style.webkitMaskPosition = ` center ${logoPos.y}px`
-
-    let tl = gsap.timeline()
-    tl.pause()
-    tl.fromTo(
-      '#proyectos',
-      { maskPosition: ` center ${logoPos.y}px` },
-      {
-        maskSize: '2000dvh',
-        maskPosition: ` center calc(-440dvh)`,
-        ease: 'power1.inOut',
-        delay: 0,
-        duration: 2
-      }
-    )
-    tl.fromTo(
-      '#logoFondo',
-      { backgroundColor: '#FFFFFFFF' },
-      {
-        backgroundColor: '#FFFFFF00',
-        ease: 'none',
-        delay: 0.5,
-        duration: 0.5
-      },
-      '<'
-    )
-    return tl
-  }
+  gsap.registerPlugin(ScrollTrigger)
+  const projects = useRef()
+  const contenido = useRef()
 
   useLayoutEffect(() => {
-    scrollTo(0, 0)
-    let tl = createTimeline()
+    let tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: contenido.current,
+        pin: contenido.current,
+        pinSpacing: false,
+        start: 'top top',
+        end: 'bottom top-=50%',
+        onUpdate: self => {
+          tl.progress(self.progress).play()
+          tl.pause()
+        }
+      }
+    })
+    let tl2 = gsap.timeline({
+      scrollTrigger: {
+        trigger: contenido.current,
+        pin: projects.current,
+        pinSpacing: true,
+        start: 'top top',
+        end: 'bottom top-=10%',
+        onUpdate: self => {
+          tl2.progress(self.progress).play()
+          tl2.pause()
+        }
+      }
+    })
 
-    //Reconfigurar timeline al reescalar ventana y que se mantenga
-    const reset = () => {
-      tl = createTimeline()
-      logoAnimation(tl)
-    }
-    //Funcion de scroll
-    const scroll = () => {
-      logoAnimation(tl)
-    }
+    tl.pause()
+    tl2.pause()
 
-    window.addEventListener('resize', reset)
-    document.addEventListener('scroll', scroll)
-
-    return () => {
-      document.removeEventListener('scroll', scroll)
-      window.removeEventListener('resize', reset)
-    }
+    tl.fromTo(
+      contenido.current,
+      {
+        maskImage:
+          'radial-gradient(circle at 50% 50vh, rgb(0,0,0) 50vh, rgba(0,0,0,0) 90vh)',
+        scale: 1
+      },
+      {
+        maskImage:
+          'radial-gradient(circle at 50% -90vh, rgb(0,0,0) 0vh, rgba(0,0,0,0) 80vh)',
+        scale: 0.95
+      }
+    )
+    tl2.fromTo(
+      projects.current,
+      {
+        opacity: 0,
+        filter: ' brightness(0) blur(100px)'
+      },
+      {
+        opacity: 1,
+        filter: ' brightness(1) blur(0px)'
+      }
+    )
   }, [])
 
   return (
     <>
-      <main className='h-[150dvh]'>
-        {/*Introduccion*/}
-        <section className='fixed w-full h-[100dvh] pt-20 px-10 pointer-events-none'>
-          <MovingLogo />
-          <h1
-            id='presentacion'
-            className='text-center text-2xl
-           font-medium [word-spacing:1px] mt-10 max-w-xl mx-auto'
+      <main className=''>
+        <section className='relative'>
+          <div
+            className='min-h-[100dvh] flex flex-col
+             justify-center items-center bg-[var(--backgroundColorLight)]
+             absolute'
+            ref={contenido}
           >
-            Programador con más de{' '}
-            <strong className='text-[var(--mediumHighlight)]'>3 años </strong>
-            desarrollando aplicaciones con
-            <strong className='text-[var(--mediumHighlight)] ml-2'>
-              NextJS, MySQL y Java
-            </strong>
-          </h1>
-        </section>
-        {/*Proyectos*/}
-        <section
-          id='proyectos'
-          className='fixed w-full min-h-[100dvh] logo pointer-events-none bg-[var(--backgroundColorLight)]'
-        >
-          <div id='logoFondo' className='absolute w-full h-full ' />
-
-          <article
-            className='pointer-events-auto w-full
-           text-center pt-40 bg-[var(--backgroundColorLight)]'
-          >
-            <p className='p-5'>
-              CONTENIDO CONTENIDO CONTENIDO CONTENIDO CONTENIDO CONTENIDO
-              CONTENIDO CONTENIDO CONTENIDO CONTENIDO CONTENIDO CONTENIDO
-              CONTENIDO CONTENIDO CONTENIDO CONTENIDO CONTENIDO CONTENIDO
-              CONTENIDO CONTENIDO CONTENIDO CONTENIDO CONTENIDO CONTENIDO
-              CONTENIDO CONTENIDO CONTENIDO CONTENIDO CONTENIDO CONTENIDO
-              CONTENIDO CONTENIDO
-            </p>
+            <Intro />
+          </div>
+          <article ref={projects}>
+            <DBD_Project />
+            <div className='h-[100dvh] bg-blue-400' />
+            <div className='h-[100dvh] bg-green-400' />
           </article>
         </section>
       </main>
